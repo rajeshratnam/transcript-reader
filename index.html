@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Transcripts">
+<meta name="theme-color" content="#1F6F6B">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACXElEQVR4nO3b0U3jUBRF0WFEH9QwdfGRDkDQ4LTEP/I2xEHXsVmrAec9bQUMOg9Pl+c/sOTv3h+A+yUOkjhI4iCJgyQOkjhI4iCJgyQOkjhI4iCJgyQOkjhI4iCJgyQOkjhI4iCJgyQOkjhI4iCJgyQOkjhI4iCJgyQOkjhI4iCJgyQOkjhI4iCJgyQOkjhI4iCJgyQOkjhI4iCJgyQOkjhI4iCJgyQOkjhIj7s89f/72y7PPbR/L6/DT9zhm0MZ28zf23QcyrjF8O2NxqGM203e4VwcyvgpYzfpbYUkDpI4SOIgzcUx/zecsxq7ydFvDn3cbvIOp3+s6OMWw7e3w+8c+thm/t4eni7Pw4/kKLytkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCSLt8OweCNZvLHG4o01Fm+ssXhjf+IgiYMkDpLF2/FYvLHM4o1lFm8ss3jjjnhbIYmDJA6SOEjiIImDJA6SOEjiIImDJA6SOEgWb4dh8UayeGONxRtrLN5YY/HG/sRBEgdJHCSLt+OxeGOZxRvLLN5YZvHGHfG2QhIHSRwkcZDEQRIHSRwkcZDEQRIHSRwkcZAs3q72e/6rbPF2taN//u+zeNviHKf4ksXbRmc6S7F42+58J/rE2wpJHCRxkMRBsnjb7nwn+sTibaMznaVYvG1xjlN8yeLtakf//N9n8UbytkISB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQPgAmtnJJp/hJbAAAAABJRU5ErkJggg==">
+<title>Transcript Reader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1EC; --paper:#F8FAF7; --ink:#1F2A24; --muted:#66756C; --rule:#D3DBD2;
+  --accent:#1F6F6B; --accent-soft:#D6E8E4; --dim:.32;
+  --read:"Literata", Georgia, "Times New Roman", serif;
+  --ui:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --size:19px; --measure:66ch;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141917; --paper:#1A201D; --ink:#E3E9E4; --muted:#93A198; --rule:#2C3531;
+    --accent:#5FB8AE; --accent-soft:#223532; --dim:.28;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141917; --paper:#1A201D; --ink:#E3E9E4; --muted:#93A198; --rule:#2C3531;
+  --accent:#5FB8AE; --accent-soft:#223532; --dim:.28;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 72px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* toolbar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--rule)}
+.bar-inner{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.brand{font-weight:600;font-size:15px;margin-right:auto}
+.grp{display:flex;gap:4px;align-items:center}
+.btn{border:1px solid var(--rule);background:var(--paper);padding:6px 11px;border-radius:8px;font-size:14px;cursor:pointer;line-height:1.2}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--paper);font-weight:600}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.slider{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.slider input{width:90px;accent-color:var(--accent)}
+.progress{height:3px;background:var(--accent);width:0;transition:width .1s linear}
+
+/* paste view */
+.paste{max-width:760px;margin:40px auto;padding:0 16px}
+.paste h1{font-family:var(--read);font-weight:600;font-size:clamp(26px,4vw,34px);line-height:1.2;margin:0 0 8px}
+.paste p{color:var(--muted);margin:0 0 18px;line-height:1.55}
+textarea{width:100%;min-height:46vh;resize:vertical;padding:14px;border:1px solid var(--rule);border-radius:10px;background:var(--paper);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5}
+.paste-actions{display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap}
+.hint{font-size:13px;color:var(--muted)}
+.err{color:#B3402F;font-size:14px}
+
+/* reader */
+.reader{max-width:calc(var(--measure) + 120px);margin:0 auto;padding:36px 16px 120px}
+.head{padding-left:72px;margin-bottom:28px}
+.head h1{font-family:var(--read);font-weight:600;font-size:clamp(24px,3.4vw,34px);line-height:1.22;margin:0 0 10px;max-width:var(--measure)}
+.meta{font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 16px}
+.meta a{color:var(--accent)}
+.para{position:relative;display:grid;grid-template-columns:72px minmax(0,var(--measure));margin:0;padding:6px 0;transition:opacity .25s}
+.para .t{font-size:12px;padding-top:calc(var(--size) * .45);color:var(--muted);text-decoration:none;font-variant-numeric:tabular-nums}
+a.t:hover{color:var(--accent);text-decoration:underline}
+.para p{margin:0;font-family:var(--read);font-size:var(--size);line-height:1.72;padding-left:16px;border-left:3px solid transparent}
+.para.turn p{border-left-color:var(--rule)}
+.para + .para{margin-top:calc(var(--size) * .55)}
+body.no-times .para{grid-template-columns:0 minmax(0,var(--measure))}
+body.no-times .para .t{visibility:hidden}
+body.no-times .head{padding-left:0}
+body.focus .para{opacity:var(--dim)}
+body.focus .para.active{opacity:1}
+body.focus .para.active p{border-left-color:var(--accent)}
+@media (max-width:640px){
+  /* Reader: plain stacked blocks instead of a two-column grid */
+  .para{display:block;padding:4px 0}
+  .para .t{display:block;padding:0 0 2px 15px;font-size:11px}
+  body.no-times .para .t{display:none}
+  .para p{padding-left:12px}
+  .head{padding-left:0}
+  .reader{padding:24px 16px 100px}
+  /* Toolbar: one row that scrolls sideways instead of pushing the page wider */
+  .bar-inner{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:8px 12px}
+  .bar-inner::-webkit-scrollbar{display:none}
+  .brand{display:none}
+  .grp,.slider{flex:0 0 auto}
+  .slider input{width:80px}
+}
+.btn{white-space:nowrap}
+.slider{white-space:nowrap}
+body{overflow-x:clip}
+.head h1{overflow-wrap:anywhere}
+.meta{min-width:0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-inner">
+    <span class="brand">Transcript Reader</span>
+    <div class="grp reader-only" hidden>
+      <button class="btn" id="smaller" aria-label="Smaller text">A−</button>
+      <button class="btn" id="bigger" aria-label="Bigger text">A+</button>
+    </div>
+    <label class="slider reader-only" hidden>Paragraph length
+      <input type="range" id="plen" min="35" max="160" step="5" value="70">
+    </label>
+    <div class="grp reader-only" hidden>
+      <button class="btn" id="tFocus" aria-pressed="false">Focus</button>
+      <button class="btn" id="tTimes" aria-pressed="true">Times</button>
+      <button class="btn" id="tTags" aria-pressed="true">Hide [music]</button>
+      <button class="btn" id="tFill" aria-pressed="true">Hide um/uh</button>
+    </div>
+    <div class="grp">
+      <button class="btn reader-only" id="copy" hidden>Copy text</button>
+      <button class="btn reader-only" id="newBtn" hidden>New transcript</button>
+      <button class="btn" id="theme" aria-label="Switch theme">Theme</button>
+    </div>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<main>
+  <section class="paste" id="pasteView">
+    <h1>Paste a transcript, read it like an article</h1>
+    <p>Timestamps are stripped, lines are joined into full sentences, and the text is split into short paragraphs. Works with Tactiq, YouTube "Show transcript", SRT and VTT captions.</p>
+    <textarea id="input" placeholder="Paste your transcript here…" spellcheck="false"></textarea>
+    <div class="paste-actions">
+      <button class="btn primary" id="go">Make it readable</button>
+      <span class="hint">Tip: Ctrl/Cmd + Enter also works</span>
+      <span class="err" id="err" hidden></span>
+    </div>
+  </section>
+
+  <article class="reader" id="readerView" hidden>
+    <div class="head">
+      <h1 id="title"></h1>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div id="body"></div>
+  </article>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k,d){ try{ const v = localStorage.getItem('tr_'+k); return v===null ? d : JSON.parse(v);}catch(e){return d;} },
+    set(k,v){ try{ localStorage.setItem('tr_'+k, JSON.stringify(v)); }catch(e){} }
+  };
+
+  const opts = Object.assign({size:19, plen:70, focus:false, times:true, tags:true, fill:true, theme:null}, store.get('opts',{}));
+  let raw = '';
+
+  /* ---------- parsing ---------- */
+  function decode(s){
+    const ta = document.createElement('textarea');
+    ta.innerHTML = s;
+    return ta.value;
+  }
+  function toSec(ts){
+    const p = ts.split(':').map(Number);
+    return p.reduce((a,b)=>a*60+b,0);
+  }
+  function fmt(sec){
+    sec = Math.floor(sec);
+    const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60), s = sec%60;
+    const pad = n => String(n).padStart(2,'0');
+    return h ? h+':'+pad(m)+':'+pad(s) : m+':'+pad(s);
+  }
+  function ytLink(url, sec){
+    const m = (url||'').match(/(?:v=|watch\/|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/);
+    return m ? 'https://www.youtube.com/watch?v='+m[1]+'&t='+Math.floor(sec)+'s' : null;
+  }
+
+  const TS = '((?:\\d{1,2}:)?\\d{1,2}:\\d{2})(?:[.,]\\d+)?';
+  const reRange = new RegExp('^'+TS+'\\s*-->');
+  const reAlone = new RegExp('^\\[?'+TS+'\\]?$');
+  const reLead  = new RegExp('^\\[?'+TS+'\\]?\\s*[-:]?\\s+(.+)$');
+
+  function parse(text){
+    const meta = {title:'', url:''};
+    const segs = [];
+    let pending = null;
+    for (let line of decode(text).split(/\r?\n/)){
+      const t = line.trim();
+      if (!t) continue;
+      if (t.startsWith('#')){
+        const h = t.replace(/^#+\s*/,'');
+        if (/^https?:\/\//i.test(h)) meta.url = h;
+        else if (!/tactiq|transcript$/i.test(h) && !meta.title) meta.title = h;
+        continue;
+      }
+      if (/^WEBVTT/i.test(t) || /^\d+$/.test(t) || /^(NOTE|Kind:|Language:)/.test(t)) continue;
+      let m;
+      if ((m = t.match(reRange))) { pending = toSec(m[1]); continue; }
+      if ((m = t.match(reAlone))) { pending = toSec(m[1]); continue; }
+      if ((m = t.match(reLead)))  { segs.push({time:toSec(m[1]), text:m[2]}); pending = null; continue; }
+      if (/^https?:\/\//i.test(t) && !meta.url) { meta.url = t; continue; }
+      segs.push({time:pending, text:t.replace(/<[^>]+>/g,'')});
+      pending = null;
+    }
+    return {meta, segs};
+  }
+
+  function tidy(s){
+    return s.replace(/\s+/g,' ')
+            .replace(/\s+([,.!?;:])/g,'$1')
+            .replace(/(^|\s)i(?=[\s',.?!])/g,'$1I')
+            .replace(/,\s*([.!?])/g,'$1')
+            .replace(/^[,;:\s]+/,'')
+            .trim();
+  }
+  function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function build(text){
+    const {meta, segs} = parse(text);
+    if (!segs.length) return null;
+
+    // Join all lines into one stream, remembering where each timed line starts.
+    let full = '';
+    const marks = [];
+    for (const seg of segs){
+      let t = seg.text;
+      if (opts.tags) t = t.replace(/\[[^\]]*\]/g,' ').replace(/\([^)]*(music|laughter|applause)[^)]*\)/gi,' ');
+      if (opts.fill) t = t.replace(/\b(?:um+|uh+|erm+|hmm+)\b,?\s*/gi,' ');
+      t = t.replace(/\s*>>\s*/g,' \u0001 ');
+      if (seg.time !== null) marks.push({pos: full.length, time: seg.time});
+      full += ' ' + t;
+    }
+    const timeAt = pos => {
+      let lo = 0, hi = marks.length - 1, ans = null;
+      while (lo <= hi){ const mid = (lo+hi)>>1; if (marks[mid].pos <= pos){ ans = marks[mid].time; lo = mid+1; } else hi = mid-1; }
+      return ans;
+    };
+
+    // Split on speaker changes, then into sentences, then group into paragraphs.
+    const paras = [];
+    const target = opts.plen;
+    let offset = 0;
+    const blocks = full.split('\u0001');
+    blocks.forEach((block, bi) => {
+      const sentences = [];
+      const re = /[^.!?]+(?:[.!?]+["')\]]*|$)/g;
+      let m;
+      while ((m = re.exec(block))){
+        if (!m[0].trim()) { if (re.lastIndex === m.index) re.lastIndex++; continue; }
+        const words = m[0].trim().split(/\s+/);
+        // Unpunctuated captions: force breaks inside very long "sentences".
+        if (words.length > target * 1.5){
+          let wpos = m.index;
+          for (let i = 0; i < words.length; i += target){
+            const chunk = words.slice(i, i+target).join(' ');
+            sentences.push({text: chunk, start: offset + wpos, words: Math.min(target, words.length - i)});
+            wpos = block.indexOf(words[Math.min(i+target, words.length-1)], wpos + 1);
+          }
+        } else {
+          sentences.push({text: m[0], start: offset + m.index, words: words.length});
+        }
+      }
+      let cur = null;
+      for (const s of sentences){
+        if (!cur){ cur = {text:'', words:0, time: timeAt(s.start), turn: bi > 0 && !paras.some(p=>p.block===bi), block: bi}; }
+        cur.text += ' ' + s.text; cur.words += s.words;
+        if (cur.words >= target){ paras.push(cur); cur = null; }
+      }
+      if (cur){
+        const prev = paras[paras.length-1];
+        if (cur.words < 12 && prev && prev.block === bi){ prev.text += ' ' + cur.text; prev.words += cur.words; }
+        else paras.push(cur);
+      }
+      offset += block.length + 1;
+    });
+
+    const out = paras.map(p => ({...p, text: cap(tidy(p.text))})).filter(p => p.text.length > 1);
+    const words = out.reduce((a,p)=>a+p.words,0);
+    return {meta, paras: out, words};
+  }
+
+  /* ---------- rendering ---------- */
+  function render(){
+    const doc = build(raw);
+    if (!doc){ showErr('No transcript text found. Check that you pasted the whole thing.'); return false; }
+    $('title').textContent = doc.meta.title || 'Transcript';
+    const mins = Math.max(1, Math.round(doc.words / 230));
+    const meta = $('meta'); meta.innerHTML = '';
+    const add = (txt, href) => { const el = document.createElement(href ? 'a' : 'span'); el.textContent = txt; if (href){ el.href = href; el.target = '_blank'; el.rel = 'noopener'; } meta.appendChild(el); };
+    add(doc.words.toLocaleString() + ' words');
+    add('about ' + mins + ' min read');
+    add(doc.paras.length + ' paragraphs');
+    if (doc.meta.url) add('Open source video', doc.meta.url);
+
+    const body = $('body'); body.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    for (const p of doc.paras){
+      const row = document.createElement('div');
+      row.className = 'para' + (p.turn ? ' turn' : '') + (p.time !== null ? ' has-t' : '');
+      const link = p.time !== null ? ytLink(doc.meta.url, p.time) : null;
+      const t = document.createElement(link ? 'a' : 'span');
+      t.className = 't';
+      if (p.time !== null) t.textContent = fmt(p.time);
+      if (link){ t.href = link; t.target = '_blank'; t.rel = 'noopener'; t.title = 'Play from here'; }
+      const para = document.createElement('p');
+      para.textContent = p.text;
+      row.append(t, para);
+      frag.appendChild(row);
+    }
+    body.appendChild(frag);
+    window.__doc = doc;
+    updateFocus();
+    return true;
+  }
+
+  function showErr(msg){ const e = $('err'); e.textContent = msg; e.hidden = !msg; }
+
+  function showReader(on){
+    $('pasteView').hidden = on;
+    $('readerView').hidden = !on;
+    document.querySelectorAll('.reader-only').forEach(el => el.hidden = !on);
+    window.scrollTo(0,0);
+    onScroll();
+  }
+
+  function applyOpts(){
+    document.documentElement.style.setProperty('--size', opts.size + 'px');
+    if (opts.theme) document.documentElement.dataset.theme = opts.theme; else delete document.documentElement.dataset.theme;
+    document.body.classList.toggle('focus', opts.focus);
+    document.body.classList.toggle('no-times', !opts.times);
+    $('tFocus').setAttribute('aria-pressed', opts.focus);
+    $('tTimes').setAttribute('aria-pressed', opts.times);
+    $('tTags').setAttribute('aria-pressed', opts.tags);
+    $('tFill').setAttribute('aria-pressed', opts.fill);
+    $('plen').value = opts.plen;
+    store.set('opts', opts);
+  }
+
+  /* ---------- focus + progress ---------- */
+  function updateFocus(){
+    if (!opts.focus) return;
+    const mid = window.innerHeight * 0.42;
+    let best = null, bestD = Infinity;
+    document.querySelectorAll('.para').forEach(el => {
+      const r = el.getBoundingClientRect();
+      const d = r.top <= mid && r.bottom >= mid ? 0 : Math.min(Math.abs(r.top - mid), Math.abs(r.bottom - mid));
+      if (d < bestD){ bestD = d; best = el; }
+    });
+    document.querySelectorAll('.para.active').forEach(el => { if (el !== best) el.classList.remove('active'); });
+    if (best) best.classList.add('active');
+  }
+  function onScroll(){
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    $('progress').style.width = ($('readerView').hidden || h <= 0 ? 0 : Math.min(100, window.scrollY / h * 100)) + '%';
+    updateFocus();
+  }
+  let ticking = false;
+  window.addEventListener('scroll', () => { if (!ticking){ ticking = true; requestAnimationFrame(() => { onScroll(); ticking = false; }); } }, {passive:true});
+  document.addEventListener('click', e => { const p = e.target.closest('.para'); if (p && opts.focus && !e.target.closest('a')){ document.querySelectorAll('.para.active').forEach(x=>x.classList.remove('active')); p.classList.add('active'); } });
+
+  /* ---------- actions ---------- */
+  function go(){
+    raw = $('input').value;
+    if (!raw.trim()){ showErr('Paste a transcript first.'); return; }
+    showErr('');
+    if (render()){ store.set('raw', raw); showReader(true); }
+  }
+  $('go').onclick = go;
+  $('input').addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') go(); });
+  $('newBtn').onclick = () => { $('input').value = ''; store.set('raw',''); showReader(false); $('input').focus(); };
+  $('smaller').onclick = () => { opts.size = Math.max(14, opts.size - 1); applyOpts(); };
+  $('bigger').onclick  = () => { opts.size = Math.min(28, opts.size + 1); applyOpts(); };
+  $('plen').oninput = e => { opts.plen = +e.target.value; applyOpts(); render(); };
+  $('tFocus').onclick = () => { opts.focus = !opts.focus; applyOpts(); updateFocus(); };
+  $('tTimes').onclick = () => { opts.times = !opts.times; applyOpts(); };
+  $('tTags').onclick  = () => { opts.tags = !opts.tags; applyOpts(); render(); };
+  $('tFill').onclick  = () => { opts.fill = !opts.fill; applyOpts(); render(); };
+  $('theme').onclick = () => {
+    const dark = opts.theme ? opts.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    opts.theme = dark ? 'light' : 'dark'; applyOpts();
+  };
+
+  function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('show'), 1600); }
+  $('copy').onclick = async () => {
+    const d = window.__doc; if (!d) return;
+    const text = (d.meta.title ? d.meta.title + '\n\n' : '') + d.paras.map(p => p.text).join('\n\n');
+    try { await navigator.clipboard.writeText(text); toast('Copied'); }
+    catch(e){
+      const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); toast('Copied'); } catch(_) { toast('Copy blocked by the browser'); }
+      ta.remove();
+    }
+  };
+
+  /* ---------- start ---------- */
+  applyOpts();
+  const saved = store.get('raw','');
+  if (saved){ raw = saved; $('input').value = saved; if (render()) showReader(true); }
+})();
+</script>
+</body>
+</html>
